@@ -8,8 +8,12 @@ import { useDataLayerValue } from './dataManagement/DataLayer';
 
 function App() {
 
+  //flag for to check which (login / signup) component to render
   const [flag, setFlag] = useState(1)
+
+  //for to create seperate data layer to stop prop-drilling problem
   const [{user}, dispatch] = useDataLayerValue();
+
   const authListner = () => {
     fire.auth().onAuthStateChanged((u) => {
       if(u != null) {
@@ -30,29 +34,13 @@ function App() {
     authListner();
   }, [])
 
-  const updateUser = (snapshot) => {
-    dispatch({
-      type: "SET_USER",
-      payload: snapshot.val()
-    })
-  }
-
-  useEffect(() => {
-    if(fire.auth().currentUser != null && fire.auth().currentUser.emailVerified) {
-      const ref = fire.database().ref('/user/' + fire.auth().currentUser.email.split('@')[0])
-      ref.on('value', updateUser)
-      return () => {
-        ref.off('value', updateUser)
-      }
-    }
-  }, [fire.auth().currentUser])
-
   return (
     <div>
         {
           user ? (<Profile />) : (
             <div className="container">
               <div className="box is-flex" style={{margin: "20px", flexDirection: "column", alignItems: "center"}}>
+              {/* Top login and signup option */}
               {
                 flag === 0 ? (
                   <div className="is-flex header" style={{width: "80%"}}>

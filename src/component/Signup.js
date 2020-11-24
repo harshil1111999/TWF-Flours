@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import fire from '../config/fire';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,9 +9,12 @@ function Signup() {
 
     const { register, errors, handleSubmit, watch } = useForm();
     const db = fire.database().ref('user')
-    const [{user}, dispatch] = useDataLayerValue();
+
+    //used for to compare password and re_password
     const password = useRef({});
     password.current = watch("password", "");
+
+    //save data to database and send emailVarificationLink
     const onSubmit = (value) => {
         fire.auth().createUserWithEmailAndPassword(value.email, value.password).then((user) => {
             fire.auth().currentUser.sendEmailVerification()
@@ -23,11 +26,6 @@ function Signup() {
             toast.error(err.message);
         })
     }
-
-    // useEffect(() => {
-    //     console.log(fire.auth().currentUser?.emailVerified)
-    //     // if()
-    // }, [fire.auth().currentUser?.emailVerified])
 
     return (
         <div className="container is-flex" style={{width: "100%", justifyContent: "center"}}>
