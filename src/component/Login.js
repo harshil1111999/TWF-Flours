@@ -14,15 +14,19 @@ function Login() {
 
     const onSubmit = (value) => {
         fire.auth().signInWithEmailAndPassword(value.email, value.password).then((user) => {
-            const key = value.email.split("@")[0]
-            const ref = fire.database().ref('/user/' + key)
-            ref.on('value', (snapshot) => {
-                dispatch({
-                    type: "SET_USER",
-                    payload: snapshot.val()
+            if(!fire.auth().currentUser.emailVerified) {
+                toast.error("Please varify your email first")
+            } else {
+                const key = value.email.split("@")[0]
+                const ref = fire.database().ref('/user/' + key)
+                ref.on('value', (snapshot) => {
+                    dispatch({
+                        type: "SET_USER",
+                        payload: snapshot.val()
+                    })
                 })
-            })
-            toast.info("Logged in successfully");
+                toast.info("Logged in successfully");
+            }
         }).catch((err) => {
             toast.error(err.message);
         })
@@ -33,11 +37,11 @@ function Login() {
             toast.error("Please enter your email id");
         } else {
             fire.auth().sendPasswordResetEmail(email.current).then(() => {
-                toast.info("Your password is updated successfully!")
+                toast.info("Reset password email is sent!")
             }).catch(err => {
                 console.log(err)
             })
-            toast.info("Reset password email is sent!")
+            
         }
     }
 
@@ -45,7 +49,7 @@ function Login() {
         <div className="container is-flex" style={{width: "100%", justifyContent: "center"}}>
             {/* <div className="box is-flex" style={{margin: "20px", flexDirection: "column", alignItems: "center"}}> */}
                 <div className="is-flex form" style={{flexDirection: "column", marginTop: "40px", alignItems: "center", width: "50%"}}>
-                    <form onSubmit={handleSubmit(onSubmit)} style={{width: "100%"}}>
+                    <form style={{width: "100%"}}>
                         <div className="is-flex" style={{flexDirection: "column"}}>
                             {/* email */}
                             <div className="field">
@@ -96,7 +100,7 @@ function Login() {
                             <a style={{marginLeft: "auto"}} onClick={handleForgotPassword}>Forgot Password?</a>
                         </div>
                         <div style={{marginTop: "20px", textAlign: "center"}}>
-                            <button className="button is-link is-rounded is-outlined" style={{width: "40%"}}>Login</button>
+                            <button onClick={handleSubmit(onSubmit)} className="button is-link is-rounded is-outlined" style={{width: "40%"}}>Login</button>
                         </div>   
                     </form>
                 </div>

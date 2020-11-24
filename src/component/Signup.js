@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import fire from '../config/fire';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,25 +12,27 @@ function Signup() {
     const [{user}, dispatch] = useDataLayerValue();
     const password = useRef({});
     password.current = watch("password", "");
-
     const onSubmit = (value) => {
         fire.auth().createUserWithEmailAndPassword(value.email, value.password).then((user) => {
+            fire.auth().currentUser.sendEmailVerification()
+            document.getElementById("form").reset()
+            toast.info("Varification email is sent!")
             const key = value.email.split("@")[0]
             db.child(key).set(value)
-            dispatch({
-                type: "SET_USER",
-                payload: value
-            })
-            toast.info("Signed up successfully");
         }).catch(err => {
             toast.error(err.message);
         })
     }
 
+    // useEffect(() => {
+    //     console.log(fire.auth().currentUser?.emailVerified)
+    //     // if()
+    // }, [fire.auth().currentUser?.emailVerified])
+
     return (
         <div className="container is-flex" style={{width: "100%", justifyContent: "center"}}>
             <div className="is-flex form" style={{flexDirection: "column", marginTop: "40px", alignItems: "center", width: "50%"}}>
-                <form onSubmit={handleSubmit(onSubmit)} style={{width: "100%"}}>
+                <form onSubmit={handleSubmit(onSubmit)} style={{width: "100%"}} id="form">
                     <div className="is-flex" style={{flexDirection: "column"}}>
                         {/* name */}
                         <div className="field">

@@ -7,7 +7,12 @@ function Profile() {
     const [{user}, dispatch] = useDataLayerValue();
 
     const logout = () => {
-        fire.auth().signOut()
+        fire.auth().signOut().then(() => {
+            dispatch({
+                type: "SET_USER",
+                payload: null
+            })
+        })
     }
 
     return (

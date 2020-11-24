@@ -10,13 +10,12 @@ function App() {
 
   const [flag, setFlag] = useState(1)
   const [{user}, dispatch] = useDataLayerValue();
-
   const authListner = () => {
-    fire.auth().onAuthStateChanged((user) => {
-      if(user) {
+    fire.auth().onAuthStateChanged((u) => {
+      if(u != null) {
         dispatch({
           type: "SET_USER",
-          user
+          user: u
         })
       } else {
         dispatch({
@@ -30,6 +29,23 @@ function App() {
   useEffect(() => {
     authListner();
   }, [])
+
+  const updateUser = (snapshot) => {
+    dispatch({
+      type: "SET_USER",
+      payload: snapshot.val()
+    })
+  }
+
+  useEffect(() => {
+    if(fire.auth().currentUser != null && fire.auth().currentUser.emailVerified) {
+      const ref = fire.database().ref('/user/' + fire.auth().currentUser.email.split('@')[0])
+      ref.on('value', updateUser)
+      return () => {
+        ref.off('value', updateUser)
+      }
+    }
+  }, [fire.auth().currentUser])
 
   return (
     <div>
@@ -57,7 +73,7 @@ function App() {
                       fontSize: "40px", borderWidth: "0px", borderRight: "2px solid lightgray", 
                       cursor: "pointer", outline: "none", justifyContent: "center", 
                       alignItems: "center", background: "rgb(72, 61, 139)", color: "whitesmoke"}}>Signup</button>
-                      <button id="login" onClick={() => setFlag(0)} style={{display: "flex", flex: 1, 
+                      <button id="login" onClick={() => setFlag(1)} style={{display: "flex", flex: 1, 
                       fontSize: "40px", border: "none", justifyContent: "center", outline: "none", 
                       cursor: "pointer", alignItems: "center", transform: "scale(0.98)",
                       boxShadow: "3px 2px 22px 1px rgba(0, 0, 0, 0.24)", 

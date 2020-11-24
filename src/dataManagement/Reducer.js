@@ -5,8 +5,9 @@ export const initialState = {
 const reducer = (state, action) => {
     switch(action.type) {
         case 'SET_USER':
+            if(action.payload === undefined)
+                return state
             return {
-                ...state,
                 user: action.payload
             }
         default: 
