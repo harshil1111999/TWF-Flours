@@ -17,14 +17,16 @@ function App() {
   const authListner = () => {
     fire.auth().onAuthStateChanged((u) => {
       if(u != null) {
-        dispatch({
-          type: "SET_USER",
-          user: u
+        fire.database().ref('/user/' + u.email.split('@')[0]).on('value', (snapshot) => {
+          dispatch({
+            type: "SET_USER",
+            payload: snapshot.val()
+          })
         })
       } else {
         dispatch({
           type: "SET_USER",
-          user: null
+          payload: null
         })
       }
     })
