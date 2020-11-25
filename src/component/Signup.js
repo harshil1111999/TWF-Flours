@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useForm } from 'react-hook-form';
 import { useDataLayerValue } from '../dataManagement/DataLayer';
+import '../styling/Signup.css'
 
 function Signup() {
 

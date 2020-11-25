@@ -1,0 +1,9 @@
+@media screen and (max-width: 500px) {
+    .profile {
+        width: 90% !important;
+    }
+}
+
+.data::-webkit-scrollbar {
+    display: none;
+}
