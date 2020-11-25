@@ -16,7 +16,7 @@ function App() {
 
   const authListner = () => {
     fire.auth().onAuthStateChanged((u) => {
-      if(u != null) {
+      if(u != null && fire.auth().currentUser.emailVerified) {
         fire.database().ref('/user/' + u.email.split('@')[0]).on('value', (snapshot) => {
           dispatch({
             type: "SET_USER",
